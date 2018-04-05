@@ -107,3 +107,5 @@ stage1_train
 stage1_test
 stage1_train_labels.csv
 submission.csv
+
+\.idea/

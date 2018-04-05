@@ -1,3 +1,5 @@
+from ww import f
+
 from utils import Dataset
 from glob import glob
 import os
@@ -16,7 +18,7 @@ class BowlDataset(Dataset):
         self.add_class("bowl", 1, "nuclei")
 
         masks = dict()
-        id_extractor = re.compile(f"{base_path}\{os.sep}(?P<image_id>.*)\{os.sep}masks\{os.sep}(?P<mask_id>.*)\.png")
+        id_extractor = re.compile(f("{base_path}\{os.sep}(?P<image_id>.*)\{os.sep}masks\{os.sep}(?P<mask_id>.*)\.png"))
 
         for mask_path in glob(os.path.join(base_path, "**", "masks", "*.png")):
             matches = id_extractor.match(mask_path)
@@ -32,11 +34,20 @@ class BowlDataset(Dataset):
         for i, (image_path, mask_paths) in enumerate(masks.items()):
             self.add_image("bowl", image_id=i, path=image_path, mask_paths=mask_paths)
 
+    def normalize(self, img, max_val=255):
+        mean = np.average(img)
+        if mean > (max_val / 2):
+            import matplotlib.pyplot as plt
+            plt.imshow(max_val - img)
+            plt.show()
+            raise ValueError
+            return max_val - img
+        return img
 
     def load_image(self, image_id):
         info = self.image_info[image_id]
 
-        return cv2.imread(info["path"])
+        return self.normalize(cv2.imread(info["path"]), max_val=255)
 
 
     def image_reference(self, image_id):
