@@ -37,10 +37,6 @@ class BowlDataset(Dataset):
     def normalize(self, img, max_val=255):
         mean = np.average(img)
         if mean > (max_val / 2):
-            import matplotlib.pyplot as plt
-            plt.imshow(max_val - img)
-            plt.show()
-            raise ValueError
             return max_val - img
         return img
 
